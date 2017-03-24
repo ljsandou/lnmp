@@ -1,0 +1,6 @@
+---
+ - name: deliver ssh key
+   authorized_key: 
+    user: root
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    state: present 

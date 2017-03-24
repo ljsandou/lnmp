@@ -1,0 +1,16 @@
+
+---
+#epel repo default
+epel_repo_url: "https://mirrors.aliyun.com/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+epel_file_path: "/etc/yum.repos.d/epel.repo"
+
+#nginx setting
+nginx_port: 80
+
+
+#mysql setting
+host: "{{ ansible_default_ipv4.address }}"
+mysql_port: 3306
+dbname: "justForTest"
+dbuser: "root"
+dbpassword: "123456"
