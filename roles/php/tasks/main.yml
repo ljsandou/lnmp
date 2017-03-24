@@ -1,15 +1,25 @@
 ---
-- name: Install php etc
+- name: Install php etc(centos6)
   yum: name={{ item }} state=present
   with_items:
    - php
    - php-mysql
    - git
    - php-fpm 
-   
+
+- name: creat conf file for php-fpm
+  template:
+    src: php-fpm.conf 
+    dest: /etc/nginx/default.d/
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+    
 - name: start php-fpm permantent
   service: name=php-fpm state=restarted enabled=yes
   ignore_errors: yes
 
+- name: restart nginx
+  service: name=nginx state=restarted   
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+    
 - name: copy php file to test if it's installed
   template: src=index.php.j2 dest=/usr/share/nginx/html/test.php

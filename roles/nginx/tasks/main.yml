@@ -6,9 +6,9 @@
 - name: copy nginx template
   template: src=default.conf dest=/etc/nginx/conf.d/default.conf 
 
-- name : exit nginx conf
-  lineinfile: path=/etc/nginx/nginx.conf regexp="^default_type" line=""
-  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+# - name : edit nginx conf
+#   lineinfile: dest=/etc/nginx/nginx.conf regexp="^default_type" line=""
+#   when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
 
 - name : add rule to iptables
   lineinfile: dest=/etc/sysconfig/iptables create=yes state=present regexp="{{ nginx_port }}" insertafter="^:OUTPUT "
