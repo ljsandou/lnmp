@@ -1,6 +1,6 @@
 ---
 - name: some basic setting
-  hosts: home
+  hosts: company
   remote_user: root
   become: yes
   become_method: sudo

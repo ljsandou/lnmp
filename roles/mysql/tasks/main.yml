@@ -1,66 +1,8 @@
 ---
-- name: install mysql etc(centos6)
-  yum: name={{ item }} state=present
-  with_items:
-    - mysql
-    - mysql-server
-    - mysql-devel
-    - MySQL-python
-  ignore_errors: yes  
+- name: install mysql for centos6
+  include: mysql_for_Centos6.yml
   when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
 
-- name: install mariaDB etc(centos7)
-  yum: name={{ item }} state=present
-  with_items:
-    - mariadb-server
-    - MySQL-python
-  ignore_errors: yes  
+- name: install mysql for centos7
+  include: mysql_for_Centos7.yml
   when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
- 
-- name: insert iptables rule
-  lineinfile: dest=/etc/sysconfig/iptables state=present regexp="{{ mysql_port }}"
-              insertafter="^:OUTPUT " line="-A INPUT -p tcp  --dport {{ mysql_port }} -j  ACCEPT"
-  notify: restart iptables
-  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
-
-- name: instert firewalld rule for mariaDB
-  firewalld: port={{ mysql_port }}/tcp  permanent=true state=enabled immediate=yes
-  ignore_errors: yes  
-  notify: restart firewalld
-  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
-
-- name: configure selinux to mysql on  any mysql_port
-  seboolean: name={{ item }} state=true persistent=yes
-  with_items:
-     - mysql_connect_any
-     - allow_user_mysql_connect
-     - httpd_can_network_connect
-  ignore_errors: yes
-
-# - name: creat mysql configuration file
-#   template: src=my.cnf.j2 dest=/etc/my.cnf
-
-# - name: Create MariaDB／mysql log file
-#   file: path=/var/log/mysqld.log state=touch owner=mysql group=mysql mode=0775
-
-# - name: Create MariaDB PID／mysql directory
-#   file: path=/var/run/mysqld state=directory owner=mysql group=mysql mode=0775
-
-- name: start mysql service and permanent
-  service: name=mysqld state=restarted enabled=yes
-  ignore_errors: yes
-  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
-
-- name: Start MariaDB Service
-  service: name=mariadb state=started enabled=yes
-  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
-
-- name: create mysql user
-  mysql_user: name={{ dbuser }} host={{ item }} password={{ dbpassword }} priv="*.*:ALL,GRANT" state=present  
-  with_items:
-   - "%"
-   - localhost
-
-- name: create database
-  mysql_db: login_user={{ dbuser }} login_password={{ dbpassword }} name="testtest" state=present
- 
