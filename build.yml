@@ -1,6 +1,6 @@
 ---
 - name: some basic setting
-  hosts: centos7
+  hosts: home
   remote_user: root
   become: yes
   become_method: sudo
